@@ -18,10 +18,10 @@ namespace ContactApp.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public async Task<ActionResult<ApiResponse>> Get(int pageIndex, int pageSize)
         {
-
-            return Ok(await _service.GetAllAsync());
+            var contacts = await _service.GetContactAsync(pageIndex, pageSize);
+            return new ApiResponse(true, "status code 200", contacts);
         }
 
 

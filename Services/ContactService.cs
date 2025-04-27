@@ -27,13 +27,6 @@ namespace ContactApp.Services
             }
         }
 
-        public async Task<IEnumerable<Contact>> GetAllAsync()
-        {
-            var contacts = await _repo.GetAllAsync();
-
-            return contacts;
-        }
-
         public async Task<Contact> GetByIdAsync(int id)
         {
             var c = await _repo.GetByIdAsync(id);
@@ -56,6 +49,12 @@ namespace ContactApp.Services
             contactSaved.PhotoUrl = entity.PhotoUrl;
 
             await _repo.UpdateAsync(contactSaved);
+        }
+
+        public async Task<PaginatedList<Contact>> GetContactAsync(int pageIndex, int pageSize)
+        {
+            var contacts = await _repo.GetContactAsync(pageIndex, pageSize);
+            return contacts;
         }
     }
 }
