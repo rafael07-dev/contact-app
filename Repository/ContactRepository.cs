@@ -27,7 +27,7 @@ namespace ContactApp.Repository
             await _context.SaveChangesAsync();
         }
 
-        public async Task<IEnumerable<Contact>> GetAllAsync() => await _context.Contacts.ToListAsync();
+        //public async Task<IEnumerable<Contact>> GetAllAsync() => await _context.Contacts.ToListAsync();
 
         public async Task<Contact> GetByIdAsync(int id)
         {
@@ -41,6 +41,22 @@ namespace ContactApp.Repository
             return contact;
 
         }
+
+        public async Task<PaginatedList<Contact>> GetContactAsync(int pageIndex, int pageSize)
+        {
+            var contacts = await _context.Contacts
+                .OrderBy(x => x.Id)
+                .Skip((pageIndex -1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var count = await _context.Contacts.CountAsync();
+
+            var totalpages = (int) Math.Ceiling(count / (double)pageSize);
+
+            return new PaginatedList<Contact> (contacts, pageIndex, totalpages);
+        }
+
         public async Task UpdateAsync(Contact contact)
         {
             _context.Contacts.Update(contact);
