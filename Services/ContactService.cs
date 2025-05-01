@@ -56,5 +56,10 @@ namespace ContactApp.Services
             var contacts = await _repo.GetContactAsync(pageIndex, pageSize);
             return contacts;
         }
+
+        public async Task<PaginatedList<Contact>> GetContactBySearchAsync(string search, int pageIndex, int pageSize)
+        {
+            return await _repo.GetContactBySearchAsync(search, pageIndex, pageSize);
+        }
     }
 }
