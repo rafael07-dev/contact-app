@@ -24,6 +24,13 @@ namespace ContactApp.Controllers
             return new ApiResponse(true, "status code 200", contacts);
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<ApiResponse>> GetContactsBySearch(string q, int pageIndex = 1, int pageSize = 10)
+        {
+            var contacts = await _service.GetContactBySearchAsync(q, pageIndex, pageSize);
+            return new ApiResponse(true, "filtereds", contacts);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)

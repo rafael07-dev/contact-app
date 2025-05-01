@@ -57,6 +57,29 @@ namespace ContactApp.Repository
             return new PaginatedList<Contact> (contacts, pageIndex, totalpages);
         }
 
+        public async Task<PaginatedList<Contact>> GetContactBySearchAsync(string search, int pageIndex, int pageSize)
+        {
+            var query = _context.Contacts.AsQueryable();
+
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(c => c.Name.ToLower().Contains(search) ||
+                                 c.Email.ToLower().Contains(search) ||
+                                 c.Phone.Contains(search));
+            }
+
+            int totalCount = await query.CountAsync();
+            var totalpages = (int)Math.Ceiling(totalCount / (double)pageSize);
+
+            var contacts = await query
+                .OrderBy(x => x.Id)
+                .Skip((pageIndex - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return new PaginatedList<Contact>(contacts, pageIndex, totalpages);
+        }
+
         public async Task UpdateAsync(Contact contact)
         {
             _context.Contacts.Update(contact);
