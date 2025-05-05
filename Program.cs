@@ -1,4 +1,5 @@
 using ContactApp.Data;
+using ContactApp.Exceptions;
 using ContactApp.Interfaces;
 using ContactApp.Repository;
 using ContactApp.Services;
@@ -50,13 +51,13 @@ internal class Program
             app.UseSwaggerUI();
         }
 
-        //var fileUploadDirectory = Path.Combine(app.Environment.ContentRootPath, "uploads");
-
         app.UseStaticFiles(new StaticFileOptions
         {
             FileProvider = new PhysicalFileProvider(Path.Combine(app.Environment.WebRootPath, "uploads")), // Ruta absoluta
             RequestPath = "/uploads"  // Ruta accesible desde el navegador
         });
+
+        app.UseMiddleware<ExceptionHandlingMiddleware>();
 
         app.UseHttpsRedirection();
 
