@@ -9,6 +9,6 @@ namespace ContactApp.Interfaces
         Task<Contact> GetByIdAsync(int id);
         Task<Contact> CreateAsync(Contact entity);
         Task UpdateAsync(int id, Contact entity);
-        Task DeleteAsync(int id);
+        Task<Contact> DeleteAsync(int id);
     }
 }

@@ -6,40 +6,42 @@ namespace ContactApp.Services
     public class ContactService: IContactService
     {
         private readonly IContactRepository _repo;
+        private readonly IFileService _fileService;
+        private ILogger<ContactService> _logger;
 
-        public ContactService(IContactRepository repo)
+        public ContactService(IContactRepository repo, IFileService fileService, ILogger<ContactService> logger)
         {
             _repo = repo;
+            _fileService = fileService;
+            _logger = logger;   
         }
 
         public async Task<Contact> CreateAsync(Contact entity)
-        {
+        {  
             return await _repo.AddAsync(entity);
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task<Contact> DeleteAsync(int id)
         {
             var c = await _repo.GetByIdAsync(id);
 
-            if (c != null)
-            {
-                await _repo.DeleteAsync(c);
-            }
+            await _repo.DeleteAsync(c);
+
+            var fileName = GetFileName(c.PhotoUrl);
+
+            _fileService.DeleteFile(fileName);
+
+            return c;
         }
 
         public async Task<Contact> GetByIdAsync(int id)
         {
-            var c = await _repo.GetByIdAsync(id);
-
-            if (c == null) return null;
-
-            return c;
+            return await _repo.GetByIdAsync(id);
         }
 
         public async Task UpdateAsync(int id, Contact entity)
         {
             var contactSaved = await _repo.GetByIdAsync(id);
-            if (contactSaved == null) return;
 
             contactSaved.Name = entity.Name;
             contactSaved.Email = entity.Email;
@@ -60,6 +62,13 @@ namespace ContactApp.Services
         public async Task<PaginatedList<Contact>> GetContactBySearchAsync(string search, int pageIndex, int pageSize)
         {
             return await _repo.GetContactBySearchAsync(search, pageIndex, pageSize);
+        }
+
+        public string GetFileName(string fileName)
+        {
+            string[] file = fileName.Split("/");
+
+            return file[2];
         }
     }
 }
