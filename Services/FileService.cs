@@ -1,5 +1,4 @@
 ﻿using ContactApp.Interfaces;
-using System.Runtime.ConstrainedExecution;
 
 namespace ContactApp.Services
 {
@@ -49,6 +48,35 @@ namespace ContactApp.Services
             }
 
             return $"/uploads/{uniqueFileName}";
+        }
+
+        public bool DeleteFile(string fileName)
+        {
+            if (!string.IsNullOrEmpty(fileName))
+            {
+                return false;
+            }
+            try
+            {
+                string filePath = Path.Combine(_webHostEnvironment.WebRootPath, "uploads", fileName);
+
+
+                if (!File.Exists(filePath))
+                {
+                    return false;
+                }
+                File.Delete(filePath);
+
+                return true;
+            }
+            catch (ArgumentException e)
+            {
+                throw new ArgumentException(fileName, e.Message);
+            }
+            catch (FileNotFoundException fe) 
+            {
+                throw new FileNotFoundException(fe.Message);
+            }
         }
     }
 }
